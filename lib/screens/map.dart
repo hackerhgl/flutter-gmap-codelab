@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:gmap_codelab/api.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:gmap_codelab/models/locations.dart' as models;
 import 'package:http/http.dart' as http;
@@ -19,30 +20,23 @@ class _MapScreenState extends State<MapScreen> {
   onMapCreated(GoogleMapController controller) async {
     this.mapController = controller;
 
-    try {
-      final url = 'https://about.google/static/data/locations.json';
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final locations = models.Locations.fromJson(json.decode(response.body));
-        for (final office in locations.offices) {
-          this.markers[office.name] = Marker(
-            markerId: MarkerId(office.name),
-            position: LatLng(office.lat, office.lng),
-            infoWindow: InfoWindow(
-              title: office.name,
-              snippet: office.address,
-            ),
-          );
-        }
-      } else {
-        this.showError();
+    this.markers.clear();
+    final locations = await Api.fetchOffices(() => this.showError());
+    if (locations != null) {
+      for (final office in locations.offices) {
+        this.markers[office.name] = Marker(
+          markerId: MarkerId(this.markers.length.toString()),
+          position: LatLng(office.lat, office.lng),
+          infoWindow: InfoWindow(
+            title: office.name,
+            snippet: office.address,
+          ),
+        );
       }
-    } catch (e) {
-      this.showError();
-    }
 
-    this.loading = false;
-    setState(() {});
+      this.loading = false;
+      setState(() {});
+    }
   }
 
   showError() {
@@ -66,8 +60,8 @@ class _MapScreenState extends State<MapScreen> {
               markers: this.markers.values.toSet(),
               onMapCreated: this.onMapCreated,
               initialCameraPosition: CameraPosition(
-                target: LatLng(0, 0),
-                zoom: 11.0,
+                target: const LatLng(0, 0),
+                zoom: 2,
               ),
             ),
           ),
