@@ -17,6 +17,25 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 version: 1.0.0+1
 
+include: package:pedantic/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - lib/src/locations.g.dart
+
+linter:
+  rules:
+    - always_declare_return_types
+    - camel_case_types
+    - empty_constructor_bodies
+    - annotate_overrides
+    - avoid_init_to_null
+    - constant_identifier_names
+    - one_member_abstracts
+    - slash_for_doc_comments
+    - sort_constructors_first
+    - unnecessary_brace_in_string_interps
+
 environment:
   sdk: '>=2.12.0 <3.0.0'
 
@@ -24,21 +43,24 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  cupertino_icons: 1.0.2
+  google_maps_flutter: 2.0.5
+  http: ^0.13.1
+  json_serializable: ^4.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  pedantic: ^1.11.0
+  build_runner: ^1.10.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
